@@ -29,6 +29,7 @@ import { DadataApiService } from '@dadata';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
 import { PushPipe } from '@ngrx/component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatSelectModule} from '@angular/material/select';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -48,6 +49,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatSnackBarModule,
     MatAutocompleteModule,
     PushPipe,
+    MatSelectModule,
   ],
   templateUrl: './detail-users-card.component.html',
   styleUrls: ['./detail-users-card.component.scss'],
@@ -73,6 +75,7 @@ export class DetailUsersCardComponent implements OnInit {
         email: vm.user.email,
         username: vm.user.username,
         city: vm.user.city,
+        educationStatus: vm.user.educationStatus,
       });
     }
 
@@ -88,6 +91,7 @@ export class DetailUsersCardComponent implements OnInit {
     email: new FormControl({ value: '', disabled: !this.vm.editMode }, [Validators.required, Validators.email]),
     username: new FormControl({ value: '', disabled: !this.vm.editMode }),
     city: new FormControl({ value: '', disabled: !this.vm.editMode }),
+    educationStatus: new FormControl({ value: '', disabled: !this.vm.editMode }),
   });
 
   @Output() editUser = new EventEmitter<{
@@ -110,6 +114,7 @@ export class DetailUsersCardComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   public areFieldsChanged$ = new BehaviorSubject<boolean>(false);
+  public educationStatuses = ['trainee', 'junior', 'middle'];
 
   ngOnInit(): void {
     this.checkChangeFields();
@@ -130,7 +135,7 @@ export class DetailUsersCardComponent implements OnInit {
         city: this.formGroup.value.city || '',
         email: this.formGroup.value.email?.trim().toLowerCase() || '',
         purchaseDate: new Date().toString() || '',
-        educationStatus: 'trainee',
+        educationStatus: this.formGroup.value.educationStatus || '',
       },
       onSuccessCb: this.onEditSuccess,
     });
