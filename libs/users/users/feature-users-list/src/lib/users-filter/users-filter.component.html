@@ -1,0 +1,17 @@
+<div class="users-filter">
+    <form 
+        class="users-filter__form"
+        [formGroup]="form"
+        (ngSubmit)="applyFilter()"
+    >
+    <mat-form-field>
+        <mat-label>Поиск пользователя</mat-label>
+        <mat-error *ngIf="form.get('name')?.hasError('required') && (form.get('name')?.touched || isFormSubmitted)">
+            Введите имя пользователя.
+        </mat-error>
+        <input matInput placeholder="" formControlName="name">
+    </mat-form-field>
+    <button class="users-filter__button" mat-raised-button type="submit" color="primary" [disabled]="form.invalid">Поиск</button>
+    <button class="users-filter__button" mat-raised-button type="button" color="primary" (click)="resetFilter()">Сбросить</button>
+    </form>
+</div>

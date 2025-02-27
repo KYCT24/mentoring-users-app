@@ -3,7 +3,7 @@ import { select, Store } from '@ngrx/store';
 import * as UsersActions from './users.actions';
 import * as UsersSelectors from './users.selectors';
 import { Observable, of, switchMap } from 'rxjs';
-import { UsersErrors } from './users.reducer';
+import { UsersErrors, UsersFilter } from './users.reducer';
 import { onSuccessEditionCbType } from './users.actions';
 import { selectLoggedUser } from '@auth/data-access';
 import { CreateUserDTO, UsersEntity } from '@users/core/data-access';
@@ -22,6 +22,7 @@ export class UsersFacade {
   public readonly openedUser$ = this.store.select(UsersSelectors.selectOpenedUser);
   public readonly loggedUser$ = this.store.select(selectLoggedUser);
   public readonly errors$: Observable<UsersErrors | null> = this.store.pipe(select(UsersSelectors.selectUsersError));
+  public readonly filteredUser$: Observable<UsersEntity[]> = this.store.pipe(select(UsersSelectors.filteredUsers));
   /**
    * Use the initialization action to perform one
    * or more tasks in your Effects.
@@ -57,4 +58,13 @@ export class UsersFacade {
   loadUser() {
     this.store.dispatch(UsersActions.loadUser());
   }
+  
+  setUsersFilter(filter: UsersFilter) {
+    this.store.dispatch(UsersActions.setUsersFilter({ filter }));
+  }
+  
+  addStoryPoints(userData: CreateUserDTO, id: number, onSuccessAddSp: onSuccessEditionCbType) {
+    this.store.dispatch(UsersActions.addStoryPoints({ userData, id, onSuccessAddSp }));
+  }
+  
 }
