@@ -89,6 +89,18 @@
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
+            <mat-form-field
+              class="edit-user-field"
+              [matTooltip]="vm.user!.educationStatus"
+              [matTooltipDisabled]="formGroup.enabled"
+            >
+              <mat-label>Статус обучения</mat-label>
+              <mat-select formControlName="educationStatus" class="edit-user-input">
+                <mat-option *ngFor="let status of educationStatuses" [value]="status">
+                  {{status}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
           <mat-card-actions class="edit-user-btns-container" *ngIf="vm.editMode">
             <button
