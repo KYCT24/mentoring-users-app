@@ -3,7 +3,7 @@ import { select, Store } from '@ngrx/store';
 import * as UsersActions from './users.actions';
 import * as UsersSelectors from './users.selectors';
 import { Observable, of, switchMap } from 'rxjs';
-import { UsersErrors } from './users.reducer';
+import { UsersErrors, UsersFilter } from './users.reducer';
 import { onSuccessEditionCbType } from './users.actions';
 import { selectLoggedUser } from '@auth/data-access';
 import { CreateUserDTO, UsersEntity } from '@users/core/data-access';
@@ -59,8 +59,12 @@ export class UsersFacade {
     this.store.dispatch(UsersActions.loadUser());
   }
   
-  setUsersFilter(filter: { name: string }) {
+  setUsersFilter(filter: UsersFilter) {
     this.store.dispatch(UsersActions.setUsersFilter({ filter }));
+  }
+  
+  addStoryPoints(userData: CreateUserDTO, id: number, onSuccessAddSp: onSuccessEditionCbType) {
+    this.store.dispatch(UsersActions.addStoryPoints({ userData, id, onSuccessAddSp }));
   }
   
 }

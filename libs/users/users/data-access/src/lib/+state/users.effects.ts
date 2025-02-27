@@ -93,6 +93,7 @@ export const editUser = createEffect(
           email: userData.email,
           username: userData.username,
           city: userData.city,
+          totalStoryPoints: userData.totalStoryPoints,
         },
         onSuccessCb,
       })),
@@ -132,6 +133,40 @@ export const loadUser = createEffect(
           );
         }
         return of(UsersActions.updateUserStatus({ status: 'loading' }));
+      })
+    );
+  },
+  { functional: true }
+);
+
+export const addUserStoryPoints = createEffect(
+  () => {
+    const actions$ = inject(Actions);
+    const apiService = inject(ApiService);
+    const usersEntities$ = inject(Store).pipe(select(selectUsersEntities));
+    return actions$.pipe(
+      ofType(UsersActions.addStoryPoints),
+      withLatestFrom(usersEntities$),
+      filter(([{ id }, usersEntities]) => Boolean(usersEntities[id])),
+      map(([{ userData, id, onSuccessAddSp }, usersEntities]) => ({
+        user: {
+          ...usersDTOAdapter.entityToDTO(<UsersEntity>usersEntities[id]),
+          purchaseDate: usersEntities[id]?.purchaseDate || 'defaultDate',
+          educationStatus: usersEntities[id]?.educationStatus || 'trainee',
+          totalStoryPoints: userData.totalStoryPoints,
+        },
+        onSuccessAddSp,
+      })),
+      switchMap(({ user, onSuccessAddSp }) => {
+        return apiService.post<UsersDTO, CreateUserDTO>(`/users/${user.id}`, user).pipe(
+          map((userData) => ({ userData, onSuccessAddSp })),
+          tap(({ onSuccessAddSp }) => onSuccessAddSp()),
+          map(({ userData }) => UsersActions.addStoryPointsSuccess({ userData })),
+          catchError((error) => {
+            console.error('Error', error);
+            return of(UsersActions.addStoryPointsFailed({ error }));
+          })
+        );
       })
     );
   },
